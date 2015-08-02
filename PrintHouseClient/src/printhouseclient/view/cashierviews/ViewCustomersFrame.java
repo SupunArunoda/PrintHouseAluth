@@ -23,9 +23,9 @@ import printhouseclient.connection.ServerConnector;
  */
 public class ViewCustomersFrame extends javax.swing.JInternalFrame {
 
-    ServerConnector serverConnector;
-    CustomerController customerController;
-    DefaultTableModel viewCustomersTableModel;
+    private ServerConnector serverConnector;
+    private CustomerController customerController;
+    private DefaultTableModel viewCustomersTableModel;
 
     /**
      * Creates new form AddNewOrderFrame

@@ -22,8 +22,8 @@ import printhouseclient.connection.ServerConnector;
  */
 public class AddNewCustomerFrame extends javax.swing.JInternalFrame {
 
-    ServerConnector serverConnector;
-    CustomerController customerController;
+    private ServerConnector serverConnector;
+    private CustomerController customerController;
 
     /**
      * Creates new form AddNewOrderFrame

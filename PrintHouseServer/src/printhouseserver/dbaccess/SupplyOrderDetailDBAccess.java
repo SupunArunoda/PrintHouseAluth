@@ -20,7 +20,7 @@ public class SupplyOrderDetailDBAccess {
     
     public int addSupplyOrderDetail(SupplyOrderDetail supplyOrderDetail) throws SQLException {
         String sql = "INSERT INTO supply_order_detail(supply_order_id,quantity,price,item_id) VALUES ("+supplyOrderDetail.getSupplyOrderId()+","+supplyOrderDetail.getQuantity()+","+supplyOrderDetail.getPrice()+","+supplyOrderDetail.getItemId()+")";
-        int result = DBHandle.setData(DBConnection.getDBConnection().getConnection(), sql);
+        int result = DBHandle.setData(DBConnection.getConnection(), sql);
         return result;
     }
     

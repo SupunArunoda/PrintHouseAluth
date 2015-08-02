@@ -16,13 +16,13 @@ import java.sql.SQLException;
 public class DBConnection {
 
     private Connection connection;
-    public static DBConnection dBConnection;
+    private static DBConnection dBConnection;
 
     private DBConnection() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/print_house?zeroDateTimeBehavior=convertToNull", "root", "");
+        connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/printhouse", "root", "");
     }
 
-    public static DBConnection getDBConnection() throws SQLException {
+    private static DBConnection getDBConnection() throws SQLException {
         if (dBConnection == null) {
             dBConnection = new DBConnection();
         }

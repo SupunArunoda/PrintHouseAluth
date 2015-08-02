@@ -3,17 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package printhouseclient.view.cashierviews;
+
+import controller.CustomerOrderController;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Job;
 import printhouseclient.connection.ServerConnector;
 import controller.JobController;
-import javax.swing.JOptionPane;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.table.DefaultTableModel;
+import model.CustomerOrder;
+import printhouseclient.extra.ButtonEditor;
+import printhouseclient.extra.ButtonRenderer;
+
 /**
  *
  * @author Buddhi
@@ -23,17 +31,40 @@ public class AddNewJobFrame extends javax.swing.JInternalFrame {
     /**
      * Creates new form AddNewOrderFrame
      */
-    ServerConnector serverConnector;
-    JobController jobController;
+    private ServerConnector serverConnector;
+    private JobController jobController;
+    private CustomerOrderController customerOrderController;
+    private DefaultTableModel waitingOrdersTableModel;
+
     public AddNewJobFrame() {
         initComponents();
-    try {
+        waitingOrdersTableModel = (DefaultTableModel) waitingOrdersTable.getModel();
+
+        try {
             serverConnector = ServerConnector.getServerConnector();
             jobController = serverConnector.getJobController();
+            customerOrderController = serverConnector.getCustomerOrderController();
         } catch (RemoteException | NotBoundException | MalformedURLException ex) {
             Logger.getLogger(AddNewCustomerFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        try {
+            ArrayList<CustomerOrder> orders = customerOrderController.getCustomerOrderDetailsList();
+
+            for (CustomerOrder customerOrder : orders) {
+                Object[] row = {customerOrder.getOrderId(), customerOrder.getDescription(), customerOrder.getDate(), customerOrder.getDueDate()};
+                waitingOrdersTableModel.addRow(row);
+            }
+
+            JButton continueButton = new JButton("Continue");
+
+            waitingOrdersTable.getColumn("Continue").setCellRenderer(new ButtonRenderer(continueButton));
+            waitingOrdersTable.getColumn("Continue").setCellEditor(new ButtonEditor(new JCheckBox(), continueButton));
+        } catch (RemoteException | SQLException ex) {
+            Logger.getLogger(AddNewJobFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -47,7 +78,7 @@ public class AddNewJobFrame extends javax.swing.JInternalFrame {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        waitingOrdersTable = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jobIDText = new javax.swing.JTextField();
@@ -71,18 +102,23 @@ public class AddNewJobFrame extends javax.swing.JInternalFrame {
 
         jLabel1.setText("Orders Requiring Jobs");
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        waitingOrdersTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Order ID", "Description", "Date", "Due Date", "Continue"
             }
-        ));
-        jScrollPane2.setViewportView(jTable2);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(waitingOrdersTable);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -264,9 +300,9 @@ public class AddNewJobFrame extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTextField jobDeliverdateText;
     private javax.swing.JTextField jobIDText;
     private javax.swing.JTextField orderDeliverDate;
+    private javax.swing.JTable waitingOrdersTable;
     // End of variables declaration//GEN-END:variables
 }

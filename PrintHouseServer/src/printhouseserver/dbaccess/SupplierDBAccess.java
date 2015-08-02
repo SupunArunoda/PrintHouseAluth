@@ -35,8 +35,8 @@ public class SupplierDBAccess {
             reentrantReadWriteLock.readLock().lock();
 
             String sql = "SELECT * FROM supplier Order by name";
-            ResultSet result = DBHandle.getData(DBConnection.getDBConnection().getConnection(), sql);
-            ArrayList<Supplier> supplierList = new ArrayList<Supplier>();
+            ResultSet result = DBHandle.getData(DBConnection.getConnection(), sql);
+            ArrayList<Supplier> supplierList = new ArrayList<>();
             while (result.next()) {
                 int id = result.getInt("supplier_id");
                 String name = result.getString("name");

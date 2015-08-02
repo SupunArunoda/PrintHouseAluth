@@ -24,12 +24,11 @@ public class PrintHouseServerStart {
             System.setProperty("java.rmi.server.hostname", "127.0.0.1");
             Registry registry = LocateRegistry.createRegistry(1099);
             registry.rebind("PrintHouseServer", new RemoteFactoryImpl());
-            
+
             System.out.println("Server started!");
         } catch (RemoteException ex) {
             System.out.println("Couldn't start the server... Try again.");
         }
-
     }
 
 }

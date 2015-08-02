@@ -13,7 +13,9 @@ import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
@@ -35,12 +37,12 @@ import printhouseclient.extra.ButtonRenderer;
  */
 public class AddNewOrderFrame extends javax.swing.JInternalFrame {
 
-    DefaultTableModel customerOrderTableModel;
-    ServerConnector serverConnector;
-    CustomerController customerController;
-    CustomerOrderController customerOrderController;
-    boolean isEditing;
-    int editingRow;
+    private DefaultTableModel customerOrderTableModel;
+    private ServerConnector serverConnector;
+    private CustomerController customerController;
+    private CustomerOrderController customerOrderController;
+    private boolean isEditing;
+    private int editingRow;
 
     /**
      * Creates new form AddNewOrderFrame
@@ -555,8 +557,6 @@ public class AddNewOrderFrame extends javax.swing.JInternalFrame {
     private void submitOrderButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitOrderButtonActionPerformed
         int orderId = Integer.parseInt(orderIdText.getText());
         int customerId = Integer.parseInt(customerIDText.getText());
-        Date date = dateChooser.getDate();
-        Date dueDate = dueDateChooser.getDate();
         String note = notesText.getText();
         String state;
         if (jobRequiredCheckBox.isSelected()) {
@@ -564,6 +564,10 @@ public class AddNewOrderFrame extends javax.swing.JInternalFrame {
         } else {
             state = "nojob";
         }
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String date = dateFormat.format(dateChooser.getDate());
+        String dueDate = dateFormat.format(dueDateChooser.getDate());
 
         CustomerOrder customerOrder = new CustomerOrder(orderId, customerId, note, date, dueDate, state);
         ArrayList<CustomerOrderDetail> customerOrderDetails = new ArrayList<>();
@@ -590,6 +594,7 @@ public class AddNewOrderFrame extends javax.swing.JInternalFrame {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Customer Order saving failed", "Failure", JOptionPane.ERROR_MESSAGE);
         }
+
 
     }//GEN-LAST:event_submitOrderButtonActionPerformed
 

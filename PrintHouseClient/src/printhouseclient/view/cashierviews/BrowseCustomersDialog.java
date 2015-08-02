@@ -23,10 +23,10 @@ import printhouseclient.connection.ServerConnector;
  */
 public class BrowseCustomersDialog extends javax.swing.JDialog {
 
-    ServerConnector serverConnector;
-    CustomerController customerController;
-    DefaultTableModel customerTableModel;
-    Customer customer;
+    private ServerConnector serverConnector;
+    private CustomerController customerController;
+    private DefaultTableModel customerTableModel;
+    public Customer customer;
 
     /**
      * Creates new form BrowseCustomersDialog
@@ -73,6 +73,7 @@ public class BrowseCustomersDialog extends javax.swing.JDialog {
         discardButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setUndecorated(true);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Select a Customer"));
 
@@ -165,7 +166,7 @@ public class BrowseCustomersDialog extends javax.swing.JDialog {
 
         try {
             customer = customerController.getCustomerDetailsById(id);
-            
+
         } catch (SQLException | RemoteException ex) {
             Logger.getLogger(BrowseCustomersDialog.class.getName()).log(Level.SEVERE, null, ex);
         }

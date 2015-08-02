@@ -32,4 +32,9 @@ public class CustomerOrderControllerImpl extends UnicastRemoteObject implements 
         return customerOrderDBAccess.addNewCustomerOrder(customerOrder, customerOrderDetails);
     }
 
+    @Override
+    public ArrayList<CustomerOrder> getCustomerOrderDetailsList() throws RemoteException, SQLException {
+        return customerOrderDBAccess.getCustomerOrderDetailsList();
+    }
+
 }

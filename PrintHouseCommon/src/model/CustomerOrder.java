@@ -17,14 +17,14 @@ public class CustomerOrder implements Serializable {
     private int orderId;
     private int customerId;
     private String description;
-    private Date date;
-    private Date dueDate;
+    private String date;
+    private String dueDate;
     private String state;
 
     public CustomerOrder() {
     }
 
-    public CustomerOrder(int orderId, int customerId, String description, Date date, Date dueDate, String state) {
+    public CustomerOrder(int orderId, int customerId, String description, String date, String dueDate, String state) {
         this.orderId = orderId;
         this.customerId = customerId;
         this.description = description;
@@ -92,28 +92,28 @@ public class CustomerOrder implements Serializable {
     /**
      * @return the date
      */
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
     /**
      * @param date the date to set
      */
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
     /**
      * @return the dueDate
      */
-    public Date getDueDate() {
+    public String getDueDate() {
         return dueDate;
     }
 
     /**
      * @param dueDate the dueDate to set
      */
-    public void setDueDate(Date dueDate) {
+    public void setDueDate(String dueDate) {
         this.dueDate = dueDate;
     }
 

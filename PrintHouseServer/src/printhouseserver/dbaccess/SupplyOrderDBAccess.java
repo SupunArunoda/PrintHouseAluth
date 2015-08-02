@@ -19,10 +19,8 @@ public class SupplyOrderDBAccess {
     public int addSupplyOrder(SupplyOrder supplyOrder) throws SQLException {
         String sql = "INSERT INTO supply_order VALUES(" + supplyOrder.getSupplyOrderId() + ",'" + supplyOrder.getDescription() + "'," + supplyOrder.getDate() + "," + supplyOrder.getSupplierId() + ")";
         System.out.println(sql);
-        int result = DBHandle.setData(DBConnection.getDBConnection().getConnection(), sql);
+        int result = DBHandle.setData(DBConnection.getConnection(), sql);
         return result;
     }
-    
-    
 
 }

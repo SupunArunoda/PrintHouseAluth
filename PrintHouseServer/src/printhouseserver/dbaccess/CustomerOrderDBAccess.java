@@ -6,6 +6,7 @@
 package printhouseserver.dbaccess;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -50,6 +51,25 @@ public class CustomerOrderDBAccess {
 
         } finally {
             reentrantReadWriteLock.writeLock().unlock();
+        }
+    }
+
+    public ArrayList<CustomerOrder> getCustomerOrderDetailsList() throws SQLException {
+        try {
+            reentrantReadWriteLock.readLock().lock();
+
+            Connection connection = DBConnection.getConnection();
+            String sql = "SELECT * FROM customer_order WHERE state='required'";
+
+            ResultSet resultSet = connection.createStatement().executeQuery(sql);
+            ArrayList<CustomerOrder> orders = new ArrayList<>();
+            while (resultSet.next()) {
+                orders.add(new CustomerOrder(resultSet.getInt("customer_order_id"), resultSet.getInt("customer_id"), resultSet.getString("description"), resultSet.getString("date"), resultSet.getString("due_date"), resultSet.getString("state")));
+            }
+
+            return orders;
+        } finally {
+            reentrantReadWriteLock.readLock().unlock();
         }
     }
 

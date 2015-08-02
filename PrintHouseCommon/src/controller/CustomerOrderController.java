@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import model.CustomerOrder;
 import model.CustomerOrderDetail;
+import model.Job;
 
 /**
  *
@@ -19,5 +20,7 @@ import model.CustomerOrderDetail;
 public interface CustomerOrderController extends Remote {
 
     public int addNewCustomerOrder(CustomerOrder customerOrder, ArrayList<CustomerOrderDetail> customerOrderDetails) throws RemoteException, SQLException;
+
+    public ArrayList<CustomerOrder> getCustomerOrderDetailsList() throws RemoteException, SQLException;
 
 }
