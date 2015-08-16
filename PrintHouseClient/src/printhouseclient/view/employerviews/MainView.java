@@ -4,30 +4,18 @@ import controller.CustomerController;
 import controller.JobController;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Frame;
 import static java.awt.Frame.MAXIMIZED_BOTH;
 import java.awt.Toolkit;
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import javax.swing.table.DefaultTableModel;
-import model.Customer;
-import model.Job;
 import printhouseclient.connection.ServerConnector;
-import printhouseclient.extra.DateConfigure;
-import static printhouseclient.view.employerviews.JobsToBeDone.awaitingTable;
+
 
 public class MainView extends javax.swing.JFrame {
 
     ServerConnector serverConnector;
     JobController jobController;
     CustomerController customerController;
-    private JobsToBeDone jobsToBeDone;
+    
 
     public MainView() {
         initComponents();
@@ -142,9 +130,18 @@ public class MainView extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    static void setDesignSubmission(Job job, Customer customer) {
-
+static void setDesignCompletedTable() {
+        Complete complete=new Complete();
+        jDesktopPane2.add(complete);
+        BasicInternalFrameUI ui = (BasicInternalFrameUI) complete.getUI();
+        Component north = ui.getNorthPane();
+        north.setPreferredSize(new Dimension(0, 0));
+        north.validate();
+        complete.setMaximumSize(null);
+        complete.setVisible(true);
+    }
+    
+    static void setDesignSubmissionTable() {
         SubmitJob submitJob = new SubmitJob();
         jDesktopPane2.add(submitJob);
         BasicInternalFrameUI ui = (BasicInternalFrameUI) submitJob.getUI();
@@ -152,21 +149,11 @@ public class MainView extends javax.swing.JFrame {
         north.setPreferredSize(new Dimension(0, 0));
         north.validate();
         submitJob.setMaximumSize(null);
-        submitJob.getJobIDText().setText(job.getJobId());
-        submitJob.getCustomerOrderIDText().setText(job.getCustomerOrderId());
-        submitJob.getAcceptedDateText().setText(job.getStarttime().substring(0, 11));
-        submitJob.getReceivedTimeText().setText(job.getStarttime().substring(11, 16));
-        submitJob.getCustomerOrderIDText().setText(job.getCustomerOrderId());
-
-        submitJob.setMaximumSize(null);
-        submitJob.getCustomerIDText().setText(Integer.toBinaryString(customer.getId()));
-        submitJob.getCustomerNameText().setText(customer.getName());
         submitJob.setVisible(true);
-
     }
 
-    static void setDesignTable(ArrayList<Job> arr) {
-        AcceptNewJobFrame acceptNewJobFrame = new AcceptNewJobFrame(arr);
+    static void setDesignTable() {
+        AcceptNewJobFrame acceptNewJobFrame = new AcceptNewJobFrame();
         jDesktopPane2.add(acceptNewJobFrame);
         BasicInternalFrameUI ui = (BasicInternalFrameUI) acceptNewJobFrame.getUI();
         Component north = ui.getNorthPane();
@@ -178,40 +165,21 @@ public class MainView extends javax.swing.JFrame {
 
     private void awaitingJobsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_awaitingJobsButtonActionPerformed
 
-        try {
-            serverConnector = ServerConnector.getServerConnector();
-            jobController = serverConnector.getJobController();
-        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
-            System.out.println("Sam " + ex.getMessage());
-        }
-
-        try {
-            ArrayList<Job> jobList = jobController.getJobFullDetailsList();
-            ArrayList<Job> newjobList = new ArrayList<>();
-            for (Job job : jobList) {
-                if (job.getState().equals("NOT ASSIGNED")) {
-                    newjobList.add(job);
-                }
-            }
-            setDesignTable(newjobList);
-        } catch (RemoteException | SQLException ex) {
-            System.out.println("sam  " + ex.getMessage());
-        }
+       
+            setDesignTable();
+        
     }//GEN-LAST:event_awaitingJobsButtonActionPerformed
 
     private void submittobeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submittobeButtonActionPerformed
-
-        JobSubmission jobSubmission = new JobSubmission(this, rootPaneCheckingEnabled);
-        jobSubmission.setLocation(300, 130);
-        jobSubmission.setVisible(true);
+     
+            setDesignSubmissionTable();
+       
+       
     }//GEN-LAST:event_submittobeButtonActionPerformed
 
     private void completedJobsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_completedJobsButtonActionPerformed
 
-        CompletedJobs completedJobs = new CompletedJobs(this, rootPaneCheckingEnabled);
-        completedJobs.setLocation(300, 130);
-        completedJobs.setConfigure();
-        completedJobs.setVisible(true);
+       setDesignCompletedTable();
 
     }//GEN-LAST:event_completedJobsButtonActionPerformed
 

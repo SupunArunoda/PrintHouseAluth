@@ -5,6 +5,8 @@
  */
 package printhouseclient.view.employerviews;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Supun
@@ -12,6 +14,8 @@ package printhouseclient.view.employerviews;
 public class EmployerView {
     public static void main(String[] args) {
         new MainView().setVisible(true);
+      
+       
     }
 }
  

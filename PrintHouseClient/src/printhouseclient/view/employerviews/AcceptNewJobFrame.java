@@ -1,4 +1,3 @@
-
 package printhouseclient.view.employerviews;
 
 import controller.CustomerController;
@@ -7,39 +6,52 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.sql.*;
 import javax.swing.*;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import printhouseclient.connection.ServerConnector;
-import printhouseclient.view.cashierviews.AddNewCustomerFrame;
 import controller.JobController;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import model.Customer;
 import model.Job;
+
+
 public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
 
     ServerConnector serverConnector;
     JobController jobController;
     CustomerController customerController;
-    ArrayList<Job> newarr;
-    public AcceptNewJobFrame(ArrayList<Job> arr) {
-        newarr=arr;
+    ArrayList<Job> jobs;
+
+    public AcceptNewJobFrame() {
+
         initComponents();
+
         try {
             serverConnector = ServerConnector.getServerConnector();
             jobController = serverConnector.getJobController();
-        } catch (RemoteException | NotBoundException | MalformedURLException ex) {
-            Logger.getLogger(AddNewCustomerFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+            System.out.println(ex.getMessage());
         }
-        DefaultTableModel model = (DefaultTableModel)awaitingTable.getModel();
-        for(int i=0;i<arr.size();i++){
-           Object[] objects = {arr.get(i).getJobId(),arr.get(i).getCustomerOrderId(),arr.get(i).getExpecteddeliverdate(),arr.get(i).getReceivedDate()};
-                model.insertRow(awaitingTable.getRowCount(), objects);
+        ArrayList<Job> arr = new ArrayList<>();
+        try {
+            ArrayList<Job> jobList = jobController.getJobFullDetailsList();
+
+            for (Job job : jobList) {
+                if (job.getState().equals("NOT ASSIGNED")) {
+                    arr.add(job);
+                }
+            }
+        } catch (RemoteException | SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        DefaultTableModel model = (DefaultTableModel) awaitingTable.getModel();
+        for (int i = 0; i < arr.size(); i++) {
+            System.out.println(arr.get(i).getJobId());
+            Object[] objects = {arr.get(i).getJobId(), arr.get(i).getCustomerOrderId(), arr.get(i).getExpecteddeliverdate(), arr.get(i).getReceivedDate()};
+            model.insertRow(awaitingTable.getRowCount(), objects);
         }
     }
 
-    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -68,7 +80,7 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
         jPanel6 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         awaitingTable = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        btnAccept = new javax.swing.JButton();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         setMinimumSize(new java.awt.Dimension(38, 33));
@@ -259,7 +271,12 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jButton1.setText("Accept");
+        btnAccept.setText("Accept");
+        btnAccept.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAcceptActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -271,10 +288,10 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(91, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAccept, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(69, 69, 69))
         );
         layout.setVerticalGroup(
@@ -286,7 +303,7 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAccept, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(93, 93, 93))
         );
 
@@ -298,57 +315,84 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_customerIDTextActionPerformed
 
     private void awaitingTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_awaitingTableMousePressed
-        String customerOrderId=null,customerId=null;
+        String customerOrderId = null, customerId = null;
         int noofclicks;
         String selectedJobID;
-        noofclicks=evt.getClickCount();
-        if(noofclicks==2){
+        int jobId;
+        noofclicks = evt.getClickCount();
+        if (noofclicks == 2) {
 
-            selectedJobID=(String) awaitingTable.getModel().getValueAt(awaitingTable.getSelectedRow(), 0);
-            System.out.println(selectedJobID);
+            selectedJobID = String.valueOf(awaitingTable.getModel().getValueAt(awaitingTable.getSelectedRow(), 0));
+            jobId = Integer.parseInt(selectedJobID);
+            System.out.println(jobId);
             try {
                 serverConnector = ServerConnector.getServerConnector();
                 jobController = serverConnector.getJobController();
-                customerController=serverConnector.getCustomerController();
+                customerController = serverConnector.getCustomerController();
             } catch (RemoteException | NotBoundException | MalformedURLException ex) {
                 System.out.println(ex.getMessage());
             }
             try {
-                ArrayList<Job> jobs=jobController.getJobFullDetailsList();
-                for(Job job:jobs){
-                    if(selectedJobID.equals(job.getJobId())){
+                jobs = jobController.getJobFullDetailsList();
+                for (Job job : jobs) {
+                    if (jobId == job.getJobId()) {
                         System.out.println(selectedJobID);
-                        job=new Job(job.getJobId(), job.getDescription(), job.getExpecteddeliverdate(), job.getReceivedDate(), job.getState(), job.getStarttime(), job.getDelivertime(), job.getEmployeeid(), job.getCustomerOrderId(), job.getRemainaingtime(), job.getEmployeeworkingtime(), job.getEmployeedescription());
-                        Customer custs=customerController.getCustomerassignedToJob(selectedJobID);
-                        System.out.println(custs.getName()+" "+custs.getId());
-                        //MainView.setDesign(job,custs);
+                        job = new Job(job.getJobId(), job.getDescription(), job.getExpecteddeliverdate(), job.getReceivedDate(), job.getState(), job.getStarttime(), job.getDelivertime(), job.getEmployeeid(), job.getCustomerOrderId(), job.getEmployeeworkingtime(), job.getEmployeedescription());
+                        Customer custs = customerController.getCustomerassignedToJob(selectedJobID);
                         setDesign(job, custs);
                     }
                 }
             } catch (RemoteException ex) {
                 System.out.println(ex.getMessage());
-            } catch (SQLException ex){
+            } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
             }
         }
-        noofclicks=0;
+        noofclicks = 0;
     }//GEN-LAST:event_awaitingTableMousePressed
- void setDesign(Job job,Customer cus){
-     
-    jobIDText.setText(job.getJobId());
-    customerOrderIDText.setText(job.getCustomerOrderId());
-    jobdescriptionArea.setText(job.getDescription());
-    customerIDText.setText(Integer.toString(cus.getId()));
-    customerNameText.setText(cus.getName());
-    receivedDateText.setText(job.getReceivedDate().substring(0,11));
-    receivedTimeText.setText(job.getReceivedDate().substring(11,16));
-    submissionDateText.setText(job.getExpecteddeliverdate().substring(0,11));
-    submissionTimeText.setText(job.getExpecteddeliverdate().substring(11,16));
-    remainingTimeLable.setText(printhouseclient.extra.DateConfigure.getDateDifference(job.getExpecteddeliverdate().replaceAll("-", "/")));
-}
+
+    private void btnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcceptActionPerformed
+        // TODO add your handling code here:
+        int employeeId = 478;//This should be get when user log into the system
+        try {
+            serverConnector = ServerConnector.getServerConnector();
+            jobController = serverConnector.getJobController();
+        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+            System.out.println(ex.getMessage());
+        }
+        try {
+            for (Job job : jobs) {
+                if (job.getState().equals("NOT ASSIGNED") && job.getJobId() == Integer.parseInt(jobIDText.getText())) {
+                    job.setEmployeeid(employeeId);
+                    jobController.updateState(job, "ASSIGNED");
+                    jobController.updatestartTime(job);
+                    jobController.updateemployeeid(job);
+                    JOptionPane.showMessageDialog(rootPane, "You have successfully accepted the job", "Confirmation", JOptionPane.INFORMATION_MESSAGE);
+
+                }
+            }
+        } catch (RemoteException | SQLException ex) {
+            JOptionPane.showMessageDialog(rootPane, "Error occured in accepting the job", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }//GEN-LAST:event_btnAcceptActionPerformed
+    void setDesign(Job job, Customer cus) {
+
+        jobIDText.setText(String.valueOf(job.getJobId()));
+        customerOrderIDText.setText(String.valueOf(job.getCustomerOrderId()));
+        jobdescriptionArea.setText(job.getDescription());
+        customerIDText.setText(Integer.toString(cus.getId()));
+        customerNameText.setText(cus.getName());
+        receivedDateText.setText(job.getReceivedDate().toString().substring(0, 11));
+        receivedTimeText.setText(job.getReceivedDate().toString().substring(11, 16));
+        submissionDateText.setText(job.getExpecteddeliverdate().toString().substring(0, 11));
+        submissionTimeText.setText(job.getExpecteddeliverdate().toString().substring(11, 16));
+        remainingTimeLable.setText(printhouseclient.extra.DateConfigure.getDateDifference(job.getExpecteddeliverdate().toString().replaceAll("-", "/")));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JTable awaitingTable;
+    private javax.swing.JButton btnAccept;
     private javax.swing.JLabel customerIDLabel1;
     private javax.swing.JTextField customerIDText;
     private javax.swing.JLabel customerNameLable;
@@ -356,7 +400,6 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
     private javax.swing.JLabel customerOrderIDLabel;
     private javax.swing.JTextField customerOrderIDText;
     private javax.swing.JLabel descriptionLabel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
@@ -378,21 +421,15 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
     /**
      * @return the asignedEmployeeTable
      */
-    
-
     /**
      * @param asignedEmployeeTable the asignedEmployeeTable to set
      */
-    
-
     /**
      * @return the customerIDLabel
      */
-    
     /**
      * @param customerIDLabel the customerIDLabel to set
      */
-    
     /**
      * @return the customerIDText
      */
@@ -508,13 +545,9 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
     /**
      * @return the jPanel6
      */
-    
-
     /**
      * @param jPanel6 the jPanel6 to set
      */
-   
-
     /**
      * @return the jScrollPane1
      */
@@ -532,13 +565,9 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
     /**
      * @return the jScrollPane3
      */
-    
-
     /**
      * @param jScrollPane3 the jScrollPane3 to set
      */
-   
-
     /**
      * @return the jobIDText
      */
@@ -592,7 +621,7 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
      * @param jobdescriptionArea the jobdescriptionArea to set
      */
     public void setJobdescriptionArea(javax.swing.JTextArea jobdescriptionArea) {
-        this.jobdescriptionArea=jobdescriptionArea;
+        this.jobdescriptionArea = jobdescriptionArea;
     }
 
     /**
@@ -682,7 +711,6 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
     /**
      * @return the titleLabel
      */
-    
     /**
      * @return the userRemainTimeLable
      */
@@ -700,7 +728,6 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
     /**
      * @return the addressArea
      */
-   
     /**
      * @return the customerIDLabel1
      */
@@ -718,21 +745,15 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
     /**
      * @return the customerIDLabel2
      */
-   
-
     /**
      * @param customerIDLabel2 the customerIDLabel2 to set
      */
-   
     /**
      * @return the customerIDLabel3
      */
-    
     /**
      * @param customerNICText the customerNICText to set
      */
-   
-   
     public javax.swing.JScrollPane getjScrollPane2() {
         return jScrollPane2;
     }
@@ -761,10 +782,7 @@ public class AcceptNewJobFrame extends javax.swing.JInternalFrame {
     /**
      * @return the viewcustomerButton
      */
-    
-
     /**
      * @param viewcustomerButton the viewcustomerButton to set
      */
-    
 }

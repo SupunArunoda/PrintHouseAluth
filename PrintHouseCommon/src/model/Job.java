@@ -1,20 +1,20 @@
 package model;
 import java.io.Serializable;
+
 public class Job implements Serializable{
-  private String jobId;  
+  private int jobId;  
   private String description;
   private String expecteddeliverdate;
   private String receivedDate;
   private String state;
   private String starttime;
   private String delivertime;
-  private String employeeid;
-  private String customerOrderId;
-  private String remainaingtime;
+  private int employeeid;
+  private int customerOrderId;
   private String employeeworkingtime;
   private String employeedescription;
 
-    public Job(String jobId, String description, String expecteddeliverdate, String receivedDate, String state, String starttime, String delivertime, String employeeid, String customerOrderId, String remainaingtime, String employeeworkingtime, String employeedescription) {
+    public Job(int jobId, String description, String expecteddeliverdate, String receivedDate, String state, String starttime, String delivertime, int employeeid, int customerOrderId, String employeeworkingtime, String employeedescription) {
         this.jobId = jobId;
         this.description = description;
         this.expecteddeliverdate = expecteddeliverdate;
@@ -24,7 +24,6 @@ public class Job implements Serializable{
         this.delivertime = delivertime;
         this.employeeid = employeeid;
         this.customerOrderId = customerOrderId;
-        this.remainaingtime = remainaingtime;
         this.employeeworkingtime = employeeworkingtime;
         this.employeedescription = employeedescription;
     }
@@ -32,14 +31,14 @@ public class Job implements Serializable{
     /**
      * @return the jobId
      */
-    public String getJobId() {
+    public int getJobId() {
         return jobId;
     }
 
     /**
      * @param jobId the jobId to set
      */
-    public void setJobId(String jobId) {
+    public void setJobId(int jobId) {
         this.jobId = jobId;
     }
 
@@ -72,16 +71,16 @@ public class Job implements Serializable{
     }
 
     /**
-     * @return the receivedDate
+     * @return the receivedString
      */
     public String getReceivedDate() {
         return receivedDate;
     }
 
     /**
-     * @param receivedDate the receivedDate to set
+     * @param receivedString the receivedString to set
      */
-    public void setReceivedDate(String receivedDate) {
+    public void setReceivedString(String receivedDate) {
         this.receivedDate = receivedDate;
     }
 
@@ -130,44 +129,35 @@ public class Job implements Serializable{
     /**
      * @return the employeeid
      */
-    public String getEmployeeid() {
+    public int getEmployeeid() {
         return employeeid;
     }
 
     /**
      * @param employeeid the employeeid to set
      */
-    public void setEmployeeid(String employeeid) {
+    public void setEmployeeid(int employeeid) {
         this.employeeid = employeeid;
     }
 
     /**
      * @return the customerOrderId
      */
-    public String getCustomerOrderId() {
+    public int getCustomerOrderId() {
         return customerOrderId;
     }
 
     /**
      * @param customerOrderId the customerOrderId to set
      */
-    public void setCustomerOrderId(String customerOrderId) {
+    public void setCustomerOrderId(int customerOrderId) {
         this.customerOrderId = customerOrderId;
     }
 
     /**
      * @return the remainaingtime
      */
-    public String getRemainaingtime() {
-        return remainaingtime;
-    }
-
-    /**
-     * @param remainaingtime the remainaingtime to set
-     */
-    public void setRemainaingtime(String remainaingtime) {
-        this.remainaingtime = remainaingtime;
-    }
+  
 
     /**
      * @return the employeeworkingtime

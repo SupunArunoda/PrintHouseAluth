@@ -1,15 +1,17 @@
 package printhouseclient.view.employerviews;
 
 
-import controller.JobController;
+import controller.*;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.sql.Timestamp;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.Date;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import model.Customer;
 import model.Job;
 import printhouseclient.connection.ServerConnector;
 
@@ -17,8 +19,36 @@ public class SubmitJob extends javax.swing.JInternalFrame {
 
     ServerConnector serverConnector;
     JobController jobController;
+    CustomerController customerController;
+    ArrayList<Job> jobs;
     public SubmitJob() {
         initComponents();
+        
+            try {
+            serverConnector = ServerConnector.getServerConnector();
+            jobController = serverConnector.getJobController();
+        } catch (NotBoundException | MalformedURLException | RemoteException ex) {
+            System.out.println(ex.getMessage());
+        }
+ArrayList<Job> arr = new ArrayList<>();
+        try {
+            ArrayList<Job> jobList = jobController.getJobFullDetailsList();
+            
+            for (Job job : jobList) {
+                if (job.getState().equals("ASSIGNED")) {
+                    arr.add(job);
+                }
+            } } catch (RemoteException | SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        
+        DefaultTableModel model = (DefaultTableModel)submissiontable.getModel();
+        for(int i=0;i<arr.size();i++){
+            System.out.println(arr.get(i).getJobId());
+           Object[] objects = {arr.get(i).getJobId(),arr.get(i).getCustomerOrderId(),arr.get(i).getStarttime(),printhouseclient.extra.DateConfigure.getDateDifference(arr.get(i).getExpecteddeliverdate().replaceAll("-", "/"))};
+                model.insertRow(submissiontable.getRowCount(), objects);
+        }
     }
 
    
@@ -26,7 +56,6 @@ public class SubmitJob extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        titleLabel = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         customerIDLabel = new javax.swing.JLabel();
         customerIDText = new javax.swing.JTextField();
@@ -41,7 +70,7 @@ public class SubmitJob extends javax.swing.JInternalFrame {
         jobreceivedDateLable = new javax.swing.JLabel();
         userRemainTimeLable = new javax.swing.JLabel();
         acceptedDateText = new javax.swing.JTextField();
-        receivedTimeText = new javax.swing.JTextField();
+        acceptedTimeText = new javax.swing.JTextField();
         remainingTimeLable = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         employeeWorkinghoursLabel = new javax.swing.JLabel();
@@ -54,16 +83,19 @@ public class SubmitJob extends javax.swing.JInternalFrame {
         employeeDescriptArea = new javax.swing.JTextArea();
         warningLable = new javax.swing.JLabel();
         submitButton = new javax.swing.JButton();
-
-        titleLabel.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        titleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        titleLabel.setText("Submit Job");
+        jScrollPane2 = new javax.swing.JScrollPane();
+        submissiontable = new javax.swing.JTable();
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Customer Details"));
 
         customerIDLabel.setText("ID");
 
         customerIDText.setEditable(false);
+        customerIDText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customerIDTextActionPerformed(evt);
+            }
+        });
 
         customerNameLable.setText("Name");
 
@@ -87,25 +119,25 @@ public class SubmitJob extends javax.swing.JInternalFrame {
                     .addComponent(customerNameLable, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(58, 58, 58)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(viewcustomerButton)
                     .addComponent(customerNameText, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(customerIDText, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(146, Short.MAX_VALUE))
+                    .addComponent(customerIDText, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(viewcustomerButton))
+                .addContainerGap(98, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(customerIDText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(customerIDLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(customerNameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(customerNameLable))
-                .addGap(36, 36, 36)
+                    .addComponent(customerIDLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(customerIDText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(customerNameLable)
+                    .addComponent(customerNameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(viewcustomerButton)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Job Details"));
@@ -124,7 +156,12 @@ public class SubmitJob extends javax.swing.JInternalFrame {
 
         acceptedDateText.setEditable(false);
 
-        receivedTimeText.setEditable(false);
+        acceptedTimeText.setEditable(false);
+        acceptedTimeText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                acceptedTimeTextActionPerformed(evt);
+            }
+        });
 
         remainingTimeLable.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         remainingTimeLable.setForeground(new java.awt.Color(0, 0, 204));
@@ -150,31 +187,31 @@ public class SubmitJob extends javax.swing.JInternalFrame {
                     .addComponent(userRemainTimeLable))
                 .addGap(36, 36, 36)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(remainingTimeLable, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(acceptedDateText, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(13, 13, 13)
-                        .addComponent(receivedTimeText, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(remainingTimeLable, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(acceptedTimeText, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(113, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jobIDText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jobIdLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jobreceivedDateLable)
                     .addComponent(acceptedDateText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(receivedTimeText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jobIDText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jobIdLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
+                    .addComponent(acceptedTimeText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(remainingTimeLable, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(userRemainTimeLable)
+                        .addComponent(customerOrderIDLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(customerOrderIDText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(customerOrderIDLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(46, Short.MAX_VALUE))
+                        .addComponent(userRemainTimeLable))
+                    .addComponent(remainingTimeLable, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Employee"));
@@ -208,8 +245,8 @@ public class SubmitJob extends javax.swing.JInternalFrame {
                         .addContainerGap()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(employeeSubmissiondescriptLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(employeeWorkinghoursLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(employeeWorkinghoursLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addComponent(hourSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -228,20 +265,18 @@ public class SubmitJob extends javax.swing.JInternalFrame {
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(employeeWorkinghoursLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(hourSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
                     .addComponent(minutesSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(27, 27, 27)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(employeeSubmissiondescriptLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(warningLable, javax.swing.GroupLayout.DEFAULT_SIZE, 15, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(warningLable, javax.swing.GroupLayout.DEFAULT_SIZE, 21, Short.MAX_VALUE))
         );
 
         submitButton.setFont(new java.awt.Font("Tahoma", 1, 15)); // NOI18N
@@ -253,38 +288,63 @@ public class SubmitJob extends javax.swing.JInternalFrame {
             }
         });
 
+        submissiontable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Job ID", "Customer Order ID", "Accepted Date", "Remaining Time"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        submissiontable.getTableHeader().setReorderingAllowed(false);
+        submissiontable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                submissiontableMousePressed(evt);
+            }
+        });
+        jScrollPane2.setViewportView(submissiontable);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(titleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 1070, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(submitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(138, 138, 138))
+                    .addComponent(jScrollPane2)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(submitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(228, 228, 228))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(12, 12, 12)
                 .addComponent(submitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -311,43 +371,89 @@ public class SubmitJob extends javax.swing.JInternalFrame {
         try {
             serverConnector = ServerConnector.getServerConnector();
             jobController = serverConnector.getJobController();
+            for (Job job : jobs) {
+                if (job.getState().equals("ASSIGNED")&&job.getJobId()==Integer.parseInt(jobIDText.getText())) {
+                    job.setEmployeedescription(description);
+                    job.setEmployeeworkingtime(hour+":"+minutes);
+                    jobController.updateState(job, "COMPLETE");
+                    jobController.updatedeliverTime(job);
+                    jobController.updateemployeeDescription(job);
+                    jobController.updateemployeeworkingTime(job);
+                    JOptionPane.showMessageDialog(rootPane, "You have successfully Submitted the job","Submission" , JOptionPane.INFORMATION_MESSAGE);
+                    
+                }
+            }
+           
         } catch (NotBoundException ex) {
             Logger.getLogger(SubmitJob.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MalformedURLException ex) {
             Logger.getLogger(SubmitJob.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (RemoteException ex) {
+        } catch (SQLException|RemoteException ex) {
             Logger.getLogger(SubmitJob.class.getName()).log(Level.SEVERE, null, ex);
         }
             
-        if(description.equals("")==false){
+    }//GEN-LAST:event_submitButtonActionPerformed
+
+    private void customerIDTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customerIDTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_customerIDTextActionPerformed
+
+    private void acceptedTimeTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acceptedTimeTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_acceptedTimeTextActionPerformed
+void setDesign(Job job,Customer cus){
+     
+    jobIDText.setText(String.valueOf(job.getJobId()));
+    customerOrderIDText.setText(String.valueOf(job.getCustomerOrderId()));
+    customerIDText.setText(Integer.toString(cus.getId()));
+    customerNameText.setText(cus.getName());
+    
+    acceptedDateText.setText(job.getStarttime().substring(0, 11));
+    acceptedTimeText.setText(job.getStarttime().substring(11,16));
+    
+    remainingTimeLable.setText(printhouseclient.extra.DateConfigure.getDateDifference(job.getExpecteddeliverdate().replaceAll("-", "/")));
+}
+    private void submissiontableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_submissiontableMousePressed
+       String customerOrderId=null,customerId=null;
+        int noofclicks;
+        String selectedJobID;
+        int jobId;
+        noofclicks=evt.getClickCount();
+        if(noofclicks==2){
+
+            selectedJobID=String.valueOf(submissiontable.getModel().getValueAt(submissiontable.getSelectedRow(), 0));
+            jobId=Integer.parseInt(selectedJobID);
+            System.out.println(jobId);
             try {
-               Job job=new Job(hour, description, title, description, title, title, description, minutes, description, description, description, description);
-              job.setState("COMPLETED");
-              job.setDelivertime(String.valueOf(new Timestamp(new Date().getTime())));
-              job.setEmployeeid("wr345");//This should be get automatically by system
-              job.setEmployeeworkingtime(hour+":"+minutes);
-              job.setEmployeedescription(description);
-              job.setJobId(customerIDText.getText());
-                System.out.println(job.getState()+" "+job.getDelivertime());
-              jobController.updateState(job, "COMPLETED");
-              jobController.updatedeliverTime(job);
-              //jobController.updateemployeeid(job);
-              //jobController.updateemployeeworkingTime(job);
-              //jobController.updateemployeeDescription(job);
-            } catch (Exception ex) {
+                serverConnector = ServerConnector.getServerConnector();
+                jobController = serverConnector.getJobController();
+                customerController=serverConnector.getCustomerController();
+            } catch (RemoteException | NotBoundException | MalformedURLException ex) {
                 System.out.println(ex.getMessage());
             }
-            warningLable.setText("");
-            JOptionPane.showMessageDialog(rootPane, "Sucessfully submitted the job", "Job Submision", JOptionPane.NO_OPTION);
-            
-        }else {
-            warningLable.setText("Sorry.....Process Abort...Description should be filled");
+            try {
+                 jobs=jobController.getJobFullDetailsList();
+                for(Job job:jobs){
+                    if(jobId==job.getJobId()){
+                        System.out.println(selectedJobID);
+                        job=new Job(job.getJobId(), job.getDescription(), job.getExpecteddeliverdate(), job.getReceivedDate(), job.getState(), job.getStarttime(), job.getDelivertime(), job.getEmployeeid(), job.getCustomerOrderId(), job.getEmployeeworkingtime(), job.getEmployeedescription());
+                        Customer custs=customerController.getCustomerassignedToJob(selectedJobID);
+                        System.out.println(custs.getName()+" "+custs.getId());
+                        setDesign(job, custs);
+                    }
+                }
+            } catch (RemoteException ex) {
+                System.out.println(ex.getMessage());
+            } catch (SQLException ex){
+                System.out.println(ex.getMessage());
+            }
         }
-    }//GEN-LAST:event_submitButtonActionPerformed
+    }//GEN-LAST:event_submissiontableMousePressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField acceptedDateText;
+    private javax.swing.JTextField acceptedTimeText;
     private javax.swing.JLabel customerIDLabel;
     private javax.swing.JTextField customerIDText;
     private javax.swing.JLabel customerNameLable;
@@ -364,14 +470,14 @@ public class SubmitJob extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jobIDText;
     private javax.swing.JLabel jobIdLabel;
     private javax.swing.JLabel jobreceivedDateLable;
     private javax.swing.JSpinner minutesSpinner;
-    private javax.swing.JTextField receivedTimeText;
     private javax.swing.JLabel remainingTimeLable;
+    public static javax.swing.JTable submissiontable;
     private javax.swing.JButton submitButton;
-    private javax.swing.JLabel titleLabel;
     private javax.swing.JLabel userRemainTimeLable;
     private javax.swing.JButton viewcustomerButton;
     private javax.swing.JLabel warningLable;
@@ -704,14 +810,14 @@ public class SubmitJob extends javax.swing.JInternalFrame {
      * @return the receivedTimeText
      */
     public javax.swing.JTextField getReceivedTimeText() {
-        return receivedTimeText;
+        return acceptedTimeText;
     }
 
     /**
      * @param receivedTimeText the receivedTimeText to set
      */
     public void setReceivedTimeText(javax.swing.JTextField receivedTimeText) {
-        this.receivedTimeText = receivedTimeText;
+        this.acceptedTimeText = receivedTimeText;
     }
 
     /**
@@ -745,16 +851,7 @@ public class SubmitJob extends javax.swing.JInternalFrame {
     /**
      * @return the titleLabel
      */
-    public javax.swing.JLabel getTitleLabel() {
-        return titleLabel;
-    }
-
-    /**
-     * @param titleLabel the titleLabel to set
-     */
-    public void setTitleLabel(javax.swing.JLabel titleLabel) {
-        this.titleLabel = titleLabel;
-    }
+   
 
     /**
      * @return the userRemainTimeLable

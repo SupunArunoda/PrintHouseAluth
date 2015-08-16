@@ -54,9 +54,9 @@ public class JobDBAccess {
             reentrantReadWriteLock.writeLock().lock();
 
             Connection connection = DBConnection.getConnection();
-            String sql = "UPDATE job SET startTime=? WHERE job_id="+job.getJobId();
+            String sql = "UPDATE job SET start_time=? WHERE job_id="+job.getJobId();
             PreparedStatement pst=connection.prepareStatement(sql);
-               pst.setTimestamp(1, new Timestamp(new Date().getTime()));
+               pst.setTimestamp(1, new java.sql.Timestamp(new Date().getTime()));
              int rs=  pst.executeUpdate();
              return rs;
         } finally {
@@ -84,7 +84,7 @@ public class JobDBAccess {
             Connection connection = DBConnection.getConnection();
             String sql = "UPDATE job SET employee_id=? WHERE job_id="+job.getJobId();
             PreparedStatement pst=connection.prepareStatement(sql);
-               pst.setString(1, job.getEmployeeid());
+               pst.setInt(1, job.getEmployeeid());
              int rs=  pst.executeUpdate();
              return rs;
         } finally {
@@ -129,7 +129,8 @@ public class JobDBAccess {
             ResultSet resultSet = connection.createStatement().executeQuery(sql);
             ArrayList<Job> jobs = new ArrayList<>();
             while (resultSet.next()) {
-                jobs.add(new Job(resultSet.getString("job_id"), resultSet.getString("description"), String.valueOf(resultSet.getTimestamp("expected_deliver_date")), String.valueOf(resultSet.getTimestamp("received_date")), resultSet.getString("state"), String.valueOf(resultSet.getTimestamp("start_time")), String.valueOf(resultSet.getTimestamp("deliver_time")), resultSet.getString("employee_id"), resultSet.getString("customer_order_id"), "",resultSet.getString("employee_working_time"), resultSet.getString("employee_description")));
+                jobs.add(new Job(Integer.parseInt(resultSet.getString("job_id")), resultSet.getString("description"), String.valueOf(resultSet.getTimestamp("expected_deliver_date")), String.valueOf(resultSet.getTimestamp("received_date")), resultSet.getString("state"), String.valueOf(resultSet.getTimestamp("start_time")), String.valueOf(resultSet.getTimestamp("deliver_time")), Integer.parseInt(resultSet.getString("employee_id")), Integer.parseInt(resultSet.getString("customer_order_id")),resultSet.getString("employee_working_time"), resultSet.getString("employee_description")));
+                System.out.println("In result set "+resultSet.getString("job_id"));
             }
             return jobs;
         } finally {
