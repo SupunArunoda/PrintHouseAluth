@@ -39,7 +39,7 @@ public class JobDBAccess {
             reentrantReadWriteLock.writeLock().lock();
 
             Connection connection = DBConnection.getConnection();
-            String sql = "UPDATE job SET state=? WHERE job_id="+job.getJobId();
+            String sql = "UPDATE job SET state=? WHERE jobId="+job.getJobId();
             System.out.println("Job id in update state"+job.getJobId());
             PreparedStatement pst=connection.prepareStatement(sql);
                pst.setString(1, state);
@@ -54,7 +54,7 @@ public class JobDBAccess {
             reentrantReadWriteLock.writeLock().lock();
 
             Connection connection = DBConnection.getConnection();
-            String sql = "UPDATE job SET start_time=? WHERE job_id="+job.getJobId();
+            String sql = "UPDATE job SET startTime=? WHERE jobId="+job.getJobId();
             PreparedStatement pst=connection.prepareStatement(sql);
                pst.setTimestamp(1, new java.sql.Timestamp(new Date().getTime()));
              int rs=  pst.executeUpdate();
@@ -63,12 +63,12 @@ public class JobDBAccess {
             reentrantReadWriteLock.writeLock().unlock();
         }
     }
-      public int updatedeliver_time(Job job) throws SQLException {
+      public int updatedeliverTime(Job job) throws SQLException {
         try {
             reentrantReadWriteLock.writeLock().lock();
 
             Connection connection = DBConnection.getConnection();
-            String sql = "UPDATE job SET deliver_time=? WHERE job_id="+job.getJobId();
+            String sql = "UPDATE job SET deliverTime=? WHERE jobId="+job.getJobId();
             PreparedStatement pst=connection.prepareStatement(sql);
                pst.setTimestamp(1, new Timestamp(new Date().getTime()));
              int rs=  pst.executeUpdate();
@@ -82,7 +82,7 @@ public class JobDBAccess {
             reentrantReadWriteLock.writeLock().lock();
 
             Connection connection = DBConnection.getConnection();
-            String sql = "UPDATE job SET employee_id=? WHERE job_id="+job.getJobId();
+            String sql = "UPDATE job SET employeeId=? WHERE jobId="+job.getJobId();
             PreparedStatement pst=connection.prepareStatement(sql);
                pst.setInt(1, job.getEmployeeid());
              int rs=  pst.executeUpdate();
@@ -91,12 +91,12 @@ public class JobDBAccess {
             reentrantReadWriteLock.writeLock().unlock();
         }
     }
-      public int updateemployee_working_time(Job job) throws SQLException {
+      public int updateemployeeworkingTime(Job job) throws SQLException {
         try {
             reentrantReadWriteLock.writeLock().lock();
 
             Connection connection = DBConnection.getConnection();
-            String sql = "UPDATE job SET employee_working_time=? WHERE job_id="+job.getJobId();
+            String sql = "UPDATE job SET employeeworkingTime=? WHERE jobId="+job.getJobId();
             PreparedStatement pst=connection.prepareStatement(sql);
                pst.setString(1, job.getEmployeeworkingtime());
              int rs=  pst.executeUpdate();
@@ -105,13 +105,13 @@ public class JobDBAccess {
             reentrantReadWriteLock.writeLock().unlock();
         }
     }
-      public int updateemployee_description(Job job) throws SQLException {
+      public int updateemployeeDescription(Job job) throws SQLException {
         try {
             reentrantReadWriteLock.writeLock().lock();
             Connection connection = DBConnection.getConnection();
             
             
-            String sql = "UPDATE job SET employee_description=? WHERE job_id="+job.getJobId();
+            String sql = "UPDATE job SET employeeDescription=? WHERE jobId="+job.getJobId();
             PreparedStatement pst=connection.prepareStatement(sql);
                pst.setString(1, job.getEmployeedescription());
              int rs=  pst.executeUpdate();
@@ -129,8 +129,8 @@ public class JobDBAccess {
             ResultSet resultSet = connection.createStatement().executeQuery(sql);
             ArrayList<Job> jobs = new ArrayList<>();
             while (resultSet.next()) {
-                jobs.add(new Job(Integer.parseInt(resultSet.getString("job_id")), resultSet.getString("description"), String.valueOf(resultSet.getTimestamp("expected_deliver_date")), String.valueOf(resultSet.getTimestamp("received_date")), resultSet.getString("state"), String.valueOf(resultSet.getTimestamp("start_time")), String.valueOf(resultSet.getTimestamp("deliver_time")), Integer.parseInt(resultSet.getString("employee_id")), Integer.parseInt(resultSet.getString("customer_order_id")),resultSet.getString("employee_working_time"), resultSet.getString("employee_description")));
-                System.out.println("In result set "+resultSet.getString("job_id"));
+                jobs.add(new Job(Integer.parseInt(resultSet.getString("jobId")), resultSet.getString("description"), String.valueOf(resultSet.getTimestamp("expectedDeliverDate")), String.valueOf(resultSet.getTimestamp("receivedDate")), resultSet.getString("state"), String.valueOf(resultSet.getTimestamp("startTime")), String.valueOf(resultSet.getTimestamp("deliverTime")), Integer.parseInt(resultSet.getString("employeeId")), Integer.parseInt(resultSet.getString("customerOrderId")),resultSet.getString("employeeworkingTime"), resultSet.getString("employeeDescription")));
+                System.out.println("In result set "+resultSet.getString("jobId"));
             }
             return jobs;
         } finally {

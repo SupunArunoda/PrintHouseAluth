@@ -49,7 +49,7 @@ public class CustomerDBAccess {
             ResultSet resultSet = connection.createStatement().executeQuery(sql);
             ArrayList<Customer> customers = new ArrayList<>();
             while (resultSet.next()) {
-                customers.add(new Customer(resultSet.getInt("customer_id"), resultSet.getString("name"), resultSet.getString("nic"), resultSet.getString("telephone"), resultSet.getString("email"), resultSet.getString("address")));
+                customers.add(new Customer(resultSet.getInt("customerId"), resultSet.getString("name"), resultSet.getString("nic"), resultSet.getString("telephone"), resultSet.getString("email"), resultSet.getString("address")));
             }
             return customers;
         } finally {
@@ -67,7 +67,7 @@ public class CustomerDBAccess {
             ResultSet resultSet = connection.createStatement().executeQuery(sql);
             ArrayList<Customer> customers = new ArrayList<>();
             while (resultSet.next()) {
-                customers.add(new Customer(resultSet.getInt("customer_id"), resultSet.getString("name"), resultSet.getString("nic"), resultSet.getString("telephone"), resultSet.getString("email"), resultSet.getString("address")));
+                customers.add(new Customer(resultSet.getInt("customerId"), resultSet.getString("name"), resultSet.getString("nic"), resultSet.getString("telephone"), resultSet.getString("email"), resultSet.getString("address")));
             }
             return customers;
         } finally {
@@ -80,11 +80,11 @@ public class CustomerDBAccess {
             reentrantReadWriteLock.readLock().lock();
 
             Connection connection = DBConnection.getConnection();
-            String sql = "SELECT * FROM customer WHERE customer_id = " + id + ";";
+            String sql = "SELECT * FROM customer WHERE customerId = " + id + ";";
 
             ResultSet resultSet = connection.createStatement().executeQuery(sql);
             if (resultSet.first()) {
-                Customer customer = new Customer(resultSet.getInt("customer_id"), resultSet.getString("name"), resultSet.getString("nic"), resultSet.getString("telephone"), resultSet.getString("email"), resultSet.getString("address"));
+                Customer customer = new Customer(resultSet.getInt("customerId"), resultSet.getString("name"), resultSet.getString("nic"), resultSet.getString("telephone"), resultSet.getString("email"), resultSet.getString("address"));
                 return customer;
             }
             return null;
@@ -98,12 +98,12 @@ public class CustomerDBAccess {
             reentrantReadWriteLock.readLock().lock();
             Customer customer = null;
             Connection connection = DBConnection.getConnection();
-            String sql = "SELECT c.customer_id,c.name,c.nic,c.telephone,c.email,c.address FROM customer c,job j, customer_order co WHERE j.customer_order_id=co.customer_order_id AND co.customer_id=c.customer_id AND job_id =" + job_id;
+            String sql = "SELECT c.customerId,c.name,c.nic,c.telephone,c.email,c.address FROM customer c,job j, customerorder co WHERE j.customerOrderId=co.customerOrderId AND co.customerId=c.customerId AND jobId =" + job_id;
 
             ResultSet resultSet = connection.createStatement().executeQuery(sql);
 
             while (resultSet.next()) {
-                customer = new Customer(Integer.parseInt(resultSet.getString("customer_id")), resultSet.getString("name"), resultSet.getString("nic"), resultSet.getString("address"), resultSet.getString("telephone"), resultSet.getString("email"));
+                customer = new Customer(Integer.parseInt(resultSet.getString("customerId")), resultSet.getString("name"), resultSet.getString("nic"), resultSet.getString("address"), resultSet.getString("telephone"), resultSet.getString("email"));
             }
             return customer;
         } finally {

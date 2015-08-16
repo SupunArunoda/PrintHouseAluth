@@ -51,7 +51,7 @@ public class JobControllerImpl extends UnicastRemoteObject implements JobControl
 
     @Override
     public int updatedeliverTime(Job job) throws RemoteException, SQLException {
-        int rs=jobDBAccess.updatedeliver_time(job);
+        int rs=jobDBAccess.updatedeliverTime(job);
         return rs;
     }
 
@@ -63,13 +63,13 @@ public class JobControllerImpl extends UnicastRemoteObject implements JobControl
 
     @Override
     public int updateemployeeworkingTime(Job job) throws RemoteException, SQLException {
-        int rs=jobDBAccess.updateemployee_working_time(job);
+        int rs=jobDBAccess.updateemployeeworkingTime(job);
         return rs;
     }
 
     @Override
     public int updateemployeeDescription(Job job) throws RemoteException, SQLException {
-        int rs=jobDBAccess.updateemployee_description(job);
+        int rs=jobDBAccess.updateemployeeDescription(job);
         return rs;
     }
 
