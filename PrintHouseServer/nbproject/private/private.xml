@@ -6,9 +6,12 @@
             <file>file:/C:/Users/Supun/Documents/NetBeansProjects/PrintHouse/PrintHouse/PrintHouseServer/src/printhouseserver/connection/DBHandle.java</file>
             <file>file:/C:/Users/Supun/Documents/NetBeansProjects/PrintHouse/PrintHouse/PrintHouseServer/src/printhouseserver/impl/JobControllerImpl.java</file>
             <file>file:/C:/Users/Supun/Documents/NetBeansProjects/PrintHouse/PrintHouse/PrintHouseServer/src/printhouseserver/connection/DBConnection.java</file>
+            <file>file:/C:/Users/Supun/Documents/NetBeansProjects/PrintHouse/PrintHouse/PrintHouseServer/src/printhouseserver/dbaccess/CustomerDBAccess.java</file>
             <file>file:/C:/Users/Supun/Documents/NetBeansProjects/PrintHouse/PrintHouse/PrintHouseServer/src/printhouseserver/dbaccess/JobDBAccess.java</file>
             <file>file:/C:/Users/Supun/Documents/NetBeansProjects/PrintHouse/PrintHouse/PrintHouseServer/src/printhouseserver/impl/ItemControllerImpl.java</file>
             <file>file:/C:/Users/Supun/Documents/NetBeansProjects/PrintHouse/PrintHouse/PrintHouseServer/src/printhouseserver/PrintHouseServerStart.java</file>
+            <file>file:/C:/Users/Supun/Documents/NetBeansProjects/PrintHouse/PrintHouse/PrintHouseServer/src/printhouseserver/impl/CustomerControllerImpl.java</file>
+            <file>file:/C:/Users/Supun/Documents/NetBeansProjects/PrintHouse/PrintHouse/PrintHouseServer/src/printhouseserver/impl/RemoteFactoryImpl.java</file>
         </group>
     </open-files>
 </project-private>

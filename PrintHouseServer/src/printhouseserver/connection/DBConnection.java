@@ -19,7 +19,7 @@ public class DBConnection {
     private static DBConnection dBConnection;
 
     private DBConnection() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/printhouse", "root", "");
+        connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/print_house", "root", "");
     }
 
     private static DBConnection getDBConnection() throws SQLException {
